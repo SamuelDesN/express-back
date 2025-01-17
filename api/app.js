@@ -51,7 +51,6 @@ async function run(tipo,usuarionuevo) {
             }
         }
         if (tipo === "agregar") {
-          
           await collection.insertOne(usuarionuevo);
       }
     } catch (err) {
@@ -82,14 +81,13 @@ app.get("/api/users/:id", async (req, res) => {
 });
 
 app.post("/api/users", async (req, res) => {
-  usuarionuevo = req.body;
-  try {
-      await run("agregar");  // Agregar a la base de datos
-      res.status(201).json({ message: "Nuevo usuario a agregar:", usuarionuevo });
-  } catch (err) {
-      console.error("Error al agregar el usuario:", err);
-      res.status(500).json({ message: "Error al agregar el usuario", error: err });
-  }
+  usuarionuevo ={
+    id: req.body.id, 
+    nombre: req.body.nombre,
+    apellido: req.body.apellido,
+    telefono: req.body.telefono
+  };
+      await run("agregar");
 });
 
 

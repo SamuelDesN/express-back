@@ -9,6 +9,7 @@ require('dotenv').config();
 let usuario = "";
 let usuarioid = "";
 let usuarios = [];
+let usuarionuevo=""
 let id = 0;
 
 
@@ -49,7 +50,8 @@ async function run(tipo,usuarionuevo) {
                 }
             }
         }
-        if (tipo === "agregar" && user) {
+        if (tipo === "agregar") {
+          
           await collection.insertOne(usuarionuevo);
       }
     } catch (err) {
@@ -80,7 +82,7 @@ app.get("/api/users/:id", async (req, res) => {
 });
 
 app.post("/api/users", async (req, res) => {
-  const user = req.body;  
+  usuarionuevo = req.body;  
   try {
       await run("agregar", user); 
       res.status(201).json({ message: "Usuario agregado con éxito" });

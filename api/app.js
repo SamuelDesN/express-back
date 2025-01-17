@@ -69,18 +69,10 @@ app.get("/api/users/user1", async (req, res) => {
     res.json(usuario);
 });
 
-  app.get("/api/users", async (req, res) => {
-    res.json({
-      message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
-  });
-  //try {
-   //    await run("usuarios");
-   //    res.json(usuarios);
-   //} catch (error) {
-   //    res.status(500).json({ error: "Error al obtener usuarios" });
-   //}
+app.get("/api/users", async (req, res) => {
+    await run("usuarios");
+    res.json(usuarios);
 });
-
 
 app.get("/api/users/:id", async (req, res) => {
     id = req.params.id;

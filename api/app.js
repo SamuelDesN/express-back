@@ -25,7 +25,7 @@ app.use(express.json());
 const uri = "mongodb+srv://Admin:Abc123.@cluster0.4ruo4.mongodb.net/";
 const client = new MongoClient(uri);
 
-async function run(tipo) {
+async function run(tipo,usuarionuevo) {
     try {
         await client.connect();
         const db = client.db('express');
@@ -49,9 +49,9 @@ async function run(tipo) {
                 }
             }
         }
-        if(tipo==="agregar"){
-          collection.insertOne(user)
-        }
+        if (tipo === "agregar" && user) {
+          await collection.insertOne(usuarionuevo);
+      }
     } catch (err) {
         console.log("Error al interactuar con la base de datos:", err);
     }
@@ -79,9 +79,14 @@ app.get("/api/users/:id", async (req, res) => {
     res.json(usuarioid);
 });
 
-app.post("/api/users", (req, res) => {
-    const user = req.body;
-    run("agregar")
+app.post("/api/users", async (req, res) => {
+  const user = req.body;  
+  try {
+      await run("agregar", user); 
+      res.status(201).json({ message: "Usuario agregado con éxito" });
+  } catch (err) {
+      res.status(500).json({ message: "Error al agregar el usuario", error: err });
+  }
 });
 
 app.use(middlewares.notFound);

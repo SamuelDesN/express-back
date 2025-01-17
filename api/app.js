@@ -52,7 +52,6 @@ async function run(tipo, usuarionuevo) {
       }
       
       if (tipo === "agregar") {
-          // Verifica que el usuario se inserte correctamente
           const result = await collection.insertOne(usuarionuevo);
           console.log("Usuario insertado:", result);
       }
@@ -86,11 +85,7 @@ app.get("/api/users/:id", async (req, res) => {
 app.post("/api/users", async (req, res) => {
   try {
     usuarionuevo = req.body;
-    
-    // Llama a la función para agregar el nuevo usuario
     await run("agregar", usuarionuevo);
-    
-    // Envía una respuesta al cliente si la inserción fue exitosa
     res.status(201).json({
       message: "Usuario agregado exitosamente",
       usuario: usuarionuevo,

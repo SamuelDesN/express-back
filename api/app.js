@@ -84,7 +84,7 @@ app.get("/api/users/:id", async (req, res) => {
 app.post("/api/users", async (req, res) => {
   usuarionuevo = req.body;  
   try {
-      await run("agregar", user); 
+      await run("agregar"); 
       res.status(201).json({ message: "Usuario agregado con éxito" });
   } catch (err) {
       res.status(500).json({ message: "Error al agregar el usuario", error: err });

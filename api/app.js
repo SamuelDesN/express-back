@@ -49,6 +49,9 @@ async function run(tipo) {
                 }
             }
         }
+        if(tipo==="agregar"){
+          collection.insertOne(user)
+        }
     } catch (err) {
         console.log("Error al interactuar con la base de datos:", err);
     }
@@ -78,7 +81,7 @@ app.get("/api/users/:id", async (req, res) => {
 
 app.post("/api/users", (req, res) => {
     const user = req.body;
-    res.json(user); 
+    run("agregar")
 });
 
 app.use(middlewares.notFound);

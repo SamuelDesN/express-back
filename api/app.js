@@ -9,7 +9,7 @@ require('dotenv').config();
 let usuario = "";
 let usuarioid = "";
 let usuarios = [];
-let usuarionuevo=""
+let usuarionuevo={}
 let id = 0;
 
 
@@ -87,7 +87,7 @@ app.post("/api/users", async (req, res) => {
     apellido: req.body.apellido,
     telefono: req.body.telefono
   };
-      await run("agregar");
+  await run("agregar");
 });
 
 

@@ -70,12 +70,15 @@ app.get("/api/users/user1", async (req, res) => {
 });
 
   app.get("/api/users", async (req, res) => {
-    try {
-        await run("usuarios");
-        res.json(usuarios);
-    } catch (error) {
-        res.status(500).json({ error: "Error al obtener usuarios" });
-    }
+    res.json({
+      message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
+  });
+  //try {
+   //    await run("usuarios");
+   //    res.json(usuarios);
+   //} catch (error) {
+   //    res.status(500).json({ error: "Error al obtener usuarios" });
+   //}
 });
 
 

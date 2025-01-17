@@ -2,92 +2,94 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
-const { MongoClient} = require('mongodb');
+const { MongoClient } = require('mongodb');
 require('dotenv').config();
-let usuario=""
-let usuarioid=""
-let usuarios=[]
-let id=0
-const middlewares = require('./middlewares');
-const api = require('.');
-const { parse } = require('dotenv');
+
+// Configuración de variables globales
+let usuario = "";
+let usuarioid = "";
+let usuarios = [];
+let id = 0;
+
+// Importa middlewares y routers
+const middlewares = require('./middlewares');  // Asegúrate de que la ruta sea correcta
+
+// Crea una instancia de la aplicación Express
 const app = express();
-app.use(morgan('dev'));
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
+
+// Usa los middlewares básicos
+app.use(morgan('dev'));      // Logger para las solicitudes HTTP
+app.use(helmet());           // Protege la aplicación con headers HTTP
+app.use(cors());             // Habilita CORS (Cross-Origin Resource Sharing)
+app.use(express.json());     // Permite recibir JSON en el cuerpo de la solicitud
+
+// Conexión con MongoDB
 const uri = "mongodb+srv://Admin:Abc123.@cluster0.4ruo4.mongodb.net/";
 const client = new MongoClient(uri);
+
+// Función para interactuar con la base de datos
 async function run(tipo) {
-  try {
-    await client.connect();
-    const db = client.db('express');
-    const collection = db.collection('usuarios');
-    if(tipo=="user1"){
-      const datos=await collection.findOne()
-      return usuario=datos
-    }
-    if(tipo=="usuarios"){
-      const result=await collection.find().toArray()
-      return usuarios=result
-    }
-    if(tipo=="id"){
-      const datos=await collection.find({id:id}).toArray()
-      for(i=0;i<datos.length;i++){
-        if(datos[i]["id"]==id){
-          usuarioid=datos[i]
+    try {
+        await client.connect();
+        const db = client.db('express');
+        const collection = db.collection('usuarios');
+        
+        if (tipo === "user1") {
+            const datos = await collection.findOne();
+            return usuario = datos;
         }
-      }
+        
+        if (tipo === "usuarios") {
+            const result = await collection.find().toArray();
+            return usuarios = result;
+        }
+        
+        if (tipo === "id") {
+            const datos = await collection.find({ id: id }).toArray();
+            for (let i = 0; i < datos.length; i++) {
+                if (datos[i].id == id) {
+                    usuarioid = datos[i];
+                }
+            }
+        }
+    } catch (err) {
+        console.log("Error al interactuar con la base de datos:", err);
     }
-  }
-  catch(err){
-    console.log("Error")
-  }
 }
-//const users=[
-//  {id:1,nombre:"Juan",apellido:"Perez",telefono:"987654321"},
-//  {id:2,nombre:"Maria",apellido:"Fernandez",telefono:"9708654321"},
-//  {id:3,nombre:"Pedro",apellido:"Alvarez",telefono:"987654321"},
-//  {id:4,nombre:"Marcos",apellido:"Silva",telefono:"987123654"}
-//  ]
-app.get('/', (req, res) => {
-  res.json({
-    message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
-  });
+
+// Rutas
+app.get("/", (req, res) => {
+    res.json({
+        message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
+    });
 });
-app.get("/api/users/user1",(req,res)=>{
-  run("user1")
-  res.json(usuario)
-})
-app.get("/api/users",(req,res)=>{
-  run("usuarios")
-  res.json(usuarios)
-})
-app.get("/api/users/:id",(req,res)=>{
-  id=req.params.id
-  run("id")
-  res.json(usuarioid)
 
-  //const userId= parseInt(req.params.id,10)
-  //const user = users.find((u)=>u.id==userId)
-  //  if(user){
-  //    res.json(user)
-  //  }else{
-  //    res.status(404).json({error:"Usuario no encontrado"})
-  //  }
-  })
+app.get("/api/users/user1", async (req, res) => {
+    await run("user1");
+    res.json(usuario);
+});
 
+app.get("/api/users", async (req, res) => {
+    await run("usuarios");
+    res.json(usuarios);
+});
 
+app.get("/api/users/:id", async (req, res) => {
+    id = req.params.id;
+    await run("id");
+    res.json(usuarioid);
+});
 
-  app.post("api/users",(req,res)=>{
-    const user= req.body
-    user.id=users.length+1
-    users.push(user)
-    res.json(user)
-  })
-app.use('/api/v1', api);
+// Ruta para agregar un nuevo usuario (requiere body con datos del usuario)
+app.post("/api/users", (req, res) => {
+    const user = req.body;
+    // Aquí puedes agregar lógica para guardar en MongoDB
+    res.json(user);  // Retorna el usuario agregado
+});
 
+// Middlewares personalizados para manejar errores
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
 
+// Exporta la aplicación para su uso en el archivo index.js
 module.exports = app;

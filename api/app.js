@@ -26,36 +26,39 @@ app.use(express.json());
 const uri = "mongodb+srv://Admin:Abc123.@cluster0.4ruo4.mongodb.net/";
 const client = new MongoClient(uri);
 
-async function run(tipo,usuarionuevo) {
-    try {
-        await client.connect();
-        const db = client.db('express');
-        const collection = db.collection('usuarios');
-        
-        if (tipo === "user1") {
-            const datos = await collection.findOne();
-            return usuario = datos;
-        }
-        
-        if (tipo === "usuarios") {
-            const result = await collection.find().toArray();
-            return usuarios = result;
-        }
-        
-        if (tipo === "id") {
-            const datos = await collection.find({ id: id }).toArray();
-            for (let i = 0; i < datos.length; i++) {
-                if (datos[i].id == id) {
-                    usuarioid = datos[i];
-                }
-            }
-        }
-        if (tipo === "agregar") {
-          await collection.insertOne(usuarionuevo);
+async function run(tipo, usuarionuevo) {
+  try {
+      await client.connect();
+      const db = client.db('express');
+      const collection = db.collection('usuarios');
+      
+      if (tipo === "user1") {
+          const datos = await collection.findOne();
+          return usuario = datos;
       }
-    } catch (err) {
-        console.log("Error al interactuar con la base de datos:", err);
-    }
+      
+      if (tipo === "usuarios") {
+          const result = await collection.find().toArray();
+          return usuarios = result;
+      }
+      
+      if (tipo === "id") {
+          const datos = await collection.find({ id: id }).toArray();
+          for (let i = 0; i < datos.length; i++) {
+              if (datos[i].id == id) {
+                  usuarioid = datos[i];
+              }
+          }
+      }
+      
+      if (tipo === "agregar") {
+          // Verifica que el usuario se inserte correctamente
+          const result = await collection.insertOne(usuarionuevo);
+          console.log("Usuario insertado:", result);
+      }
+  } catch (err) {
+      console.log("Error al interactuar con la base de datos:", err);
+  }
 }
 
 app.get("/", (req, res) => {
@@ -81,10 +84,25 @@ app.get("/api/users/:id", async (req, res) => {
 });
 
 app.post("/api/users", async (req, res) => {
-  usuarionuevo=req.body
-  await run("agregar");
+  try {
+    usuarionuevo = req.body;
+    
+    // Llama a la función para agregar el nuevo usuario
+    await run("agregar", usuarionuevo);
+    
+    // Envía una respuesta al cliente si la inserción fue exitosa
+    res.status(201).json({
+      message: "Usuario agregado exitosamente",
+      usuario: usuarionuevo,
+    });
+  } catch (error) {
+    console.error("Error al agregar usuario:", error);
+    res.status(500).json({
+      message: "Error al agregar usuario",
+      error: error.message,
+    });
+  }
 });
-
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);

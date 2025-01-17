@@ -69,7 +69,6 @@ app.get("/api/users/user1", async (req, res) => {
     res.json(usuario);
 });
 
-app.get("/api/users", async (req, res) => {
   app.get("/api/users", async (req, res) => {
     try {
         await run("usuarios");
@@ -78,7 +77,7 @@ app.get("/api/users", async (req, res) => {
         res.status(500).json({ error: "Error al obtener usuarios" });
     }
 });
-});
+
 
 app.get("/api/users/:id", async (req, res) => {
     id = req.params.id;

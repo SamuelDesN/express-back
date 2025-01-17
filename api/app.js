@@ -81,12 +81,7 @@ app.get("/api/users/:id", async (req, res) => {
 });
 
 app.post("/api/users", async (req, res) => {
-  usuarionuevo ={
-    id: req.body.id, 
-    nombre: req.body.nombre,
-    apellido: req.body.apellido,
-    telefono: req.body.telefono
-  };
+  usuarionuevo=req.body
   await run("agregar");
 });
 

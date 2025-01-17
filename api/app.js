@@ -5,29 +5,26 @@ const cors = require('cors');
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
-// Configuración de variables globales
+
 let usuario = "";
 let usuarioid = "";
 let usuarios = [];
 let id = 0;
 
-// Importa middlewares y routers
-const middlewares = require('./middlewares');  // Asegúrate de que la ruta sea correcta
 
-// Crea una instancia de la aplicación Express
+const middlewares = require('./middlewares');  
+
 const app = express();
 
-// Usa los middlewares básicos
-app.use(morgan('dev'));      // Logger para las solicitudes HTTP
-app.use(helmet());           // Protege la aplicación con headers HTTP
-app.use(cors());             // Habilita CORS (Cross-Origin Resource Sharing)
-app.use(express.json());     // Permite recibir JSON en el cuerpo de la solicitud
+app.use(morgan('dev'));      
+app.use(helmet());           
+app.use(cors());             
+app.use(express.json());     
 
-// Conexión con MongoDB
+
 const uri = "mongodb+srv://Admin:Abc123.@cluster0.4ruo4.mongodb.net/";
 const client = new MongoClient(uri);
 
-// Función para interactuar con la base de datos
 async function run(tipo) {
     try {
         await client.connect();
@@ -57,7 +54,6 @@ async function run(tipo) {
     }
 }
 
-// Rutas
 app.get("/", (req, res) => {
     res.json({
         message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
@@ -80,16 +76,13 @@ app.get("/api/users/:id", async (req, res) => {
     res.json(usuarioid);
 });
 
-// Ruta para agregar un nuevo usuario (requiere body con datos del usuario)
 app.post("/api/users", (req, res) => {
     const user = req.body;
-    // Aquí puedes agregar lógica para guardar en MongoDB
-    res.json(user);  // Retorna el usuario agregado
+    res.json(user); 
 });
 
-// Middlewares personalizados para manejar errores
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
 
-// Exporta la aplicación para su uso en el archivo index.js
+
 module.exports = app;
